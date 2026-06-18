@@ -1,7 +1,5 @@
 # Yandox Property CRM
 
-![Yandox Property CRM](https://via.placeholder.com/1200x300?text=Yandox+Property+CRM)
-
 Yandox Property CRM is a production-grade, highly scalable real estate customer relationship management system. It features advanced lead tracking, appointment scheduling, property management, and an integrated AI-powered WhatsApp automation bot (OpenClaw) capable of semantic reasoning and natural language conversation.
 
 ## 🏗️ Architecture
