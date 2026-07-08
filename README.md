@@ -65,53 +65,94 @@ Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Bui
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ System Architecture & Message Flow
 
-The application adopts a decoupled architecture. The REST API handles synchronous web requests (dashboard, property management), while a dedicated background Worker process consumes Redis queues for asynchronous, compute-heavy tasks like AI text generation and WhatsApp webhook processing.
+The system architecture is designed for zero data loss, exact chronological processing, and high resilience, specifically tailored to handle asynchronous WhatsApp messaging and computationally heavy AI inferences.
+
+### Detailed Architecture Diagram
 
 ```mermaid
 graph TD
-    Client[Web Dashboard] -->|REST API| API[Express API Server]
-    API <--> DB[(PostgreSQL)]
+    %% External Entities
+    Customer((WhatsApp User))
+    MetaAPI[Meta WhatsApp Cloud API]
     
-    Meta[Meta WhatsApp API] -->|Webhooks| API
-    API -->|Push Event| Queue[(Redis / BullMQ)]
+    %% Ingress & API Server
+    subgraph Express Backend API
+        DMZ[DMZ / Ingress]
+        SigValidator[Meta Signature Validator]
+        REST[REST API]
+        WebhookHandler[Webhooks]
+    end
     
-    Queue -->|Consume Event| Worker[Node.js AI Worker]
-    Worker <--> DB
-    Worker <--> AI[Ollama Engine]
+    %% Storage & Queues
+    subgraph Distributed Data Layer
+        DB[(PostgreSQL / Prisma)]
+        Redis[(Redis)]
+    end
     
-    Worker -->|Send Message| Meta
+    %% Workers
+    subgraph Asynchronous Workers
+        BullMQ[BullMQ Job Worker]
+        Lock(Distributed Redis Lock)
+        Drainer(DB-Queue Drainer Loop)
+        Dispatch(Dispatch Outbound)
+    end
+    
+    %% AI Infrastructure
+    subgraph AI Inference Infrastructure
+        OpenClaw[OpenClaw Agent Orchestrator]
+        CircuitBreaker{Circuit Breaker}
+        DGX[DGX Spark GPU Infrastructure<br/>Ollama LLM Engine]
+    end
+    
+    %% Front End
+    Portal[Admin Portal<br/>React + Vite]
+    
+    %% Connections
+    Customer <--> MetaAPI
+    MetaAPI -->|Webhook Payload| DMZ
+    DMZ --> SigValidator
+    SigValidator --> WebhookHandler
+    
+    WebhookHandler -->|1. Write Event| DB
+    WebhookHandler -->|2. Enqueue Trigger| Redis
+    
+    Redis -->|3. Poll Received Events| BullMQ
+    BullMQ -->|4. Attempt Acquire| Lock
+    Lock -->|5. Lock Acquired| Drainer
+    Drainer <-->|Fetch DB State| DB
+    
+    Drainer -->|6. Text + Context| OpenClaw
+    OpenClaw -->|7. Safeguarded Request| CircuitBreaker
+    CircuitBreaker -->|8. Inference Call| DGX
+    DGX -->|9. AI Response| CircuitBreaker
+    CircuitBreaker --> OpenClaw
+    
+    OpenClaw -->|10. Update Outbound Ledger| DB
+    OpenClaw --> Dispatch
+    Dispatch -->|11. Send Webhooks| MetaAPI
+    
+    REST <--> DB
+    Portal <--> REST
 ```
 
 ---
 
-## 🔄 Request Flow
+## 🔄 The Journey of a Single Message
 
-**WhatsApp AI Interaction Flow:**
-
-```mermaid
-sequenceDiagram
-    participant Customer
-    participant Meta API
-    participant Express API
-    participant Redis Queue
-    participant AI Worker
-    participant Ollama
-    
-    Customer->>Meta API: Sends WhatsApp Message
-    Meta API->>Express API: Webhook Event triggered
-    Express API->>Express API: Verify payload & signature
-    Express API->>Redis Queue: Enqueue message processing job
-    Express API-->>Meta API: 200 OK (Acknowledge)
-    
-    Redis Queue->>AI Worker: Dequeue job
-    AI Worker->>AI Worker: Fetch conversation history from DB
-    AI Worker->>Ollama: Generate contextual response
-    Ollama-->>AI Worker: AI Response
-    AI Worker->>Meta API: Send Outbound Message
-    Meta API-->>Customer: WhatsApp Reply
-```
+1. **Front Door**: Customer messages on WhatsApp; Meta sends an instant webhook to our Express Backend.
+2. **Authenticity Check**: The `Meta Signature Validator` cryptographically verifies the SHA-256 HMAC signature.
+3. **Permanent Record**: The message is saved to PostgreSQL (`RECEIVED` status). Duplicates are rejected at the DB level.
+4. **Task Queuing**: A lightweight task is placed in BullMQ (Redis), and an instant HTTP 200 OK is returned to Meta to prevent timeout retries.
+5. **Distributed Locking**: A background worker acquires a temporary Redis lock for the customer's phone number, ensuring only one worker generates an AI reply for that customer at a time.
+6. **Strict Ordering**: The `DB-Queue Drainer` ensures messages are processed sequentially based on DB timestamps.
+7. **AI Orchestration**: The `OpenClaw` orchestrator builds the context (chat history, property DB lookups) and queries the AI model.
+8. **Resilience**: The query passes through a `Circuit Breaker` that protects the system from DGX Spark/Ollama outages.
+9. **Outbound Ledger**: Before sending, a `PENDING` record is written to the Outbound Ledger in Postgres.
+10. **Delivery**: The reply is sent to the Meta WhatsApp Cloud API.
+11. **Confirmation**: Meta responds with a message ID (`wamid`), updating the ledger to `SENT`. The Redis lock is released.
+12. **Read Receipts**: Subsequent webhooks update the ledger sequentially to `DELIVERED` then `READ`.
 
 ---
 
