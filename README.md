@@ -9,8 +9,8 @@
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [System Architecture](#system-architecture)
-- [Request Flow](#request-flow)
+- [System Architecture & Message Flow](#system-architecture--message-flow)
+- [The Journey of a Single Message](#the-journey-of-a-single-message)
 - [Folder Structure](#folder-structure)
 - [Database Overview](#database-overview)
 - [API Documentation](#api-documentation)
@@ -22,9 +22,6 @@
 - [Scalability & Performance](#scalability--performance)
 - [Future Roadmap](#future-roadmap)
 - [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
 
 ---
 
@@ -340,27 +337,3 @@ For deeper technical dives, please refer to our internal documentation files:
 - [Running the System](RUN_SYSTEM.md)
 - [Testing Guide](TESTING_GUIDE.md)
 - [Deployment Guide](DEPLOYMENT_GUIDE.md)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow standard pull request workflows:
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-## ✍️ Author
-
-**Het Gandhi**  
-- GitHub: [@Hetgandhi25](https://github.com/Hetgandhi25)
