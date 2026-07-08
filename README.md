@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Property Property CRM & AI OpenClaw</h1>
+  <h1>AI Real Estate CRM & OpenClaw</h1>
   <p><strong>A production-grade, highly scalable AI-powered Real Estate CRM featuring advanced lead tracking, appointment scheduling, and an integrated WhatsApp automation bot with semantic reasoning.</strong></p>
 </div>
 
