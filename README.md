@@ -27,9 +27,9 @@
 
 ## Project Overview
 
-Property Property CRM is a comprehensive Customer Relationship Management (CRM) platform purpose-built for the real estate industry. It streamlines property listings, lead management, and agent-customer interactions. 
+The true star and hero of this system is **OpenClaw**, our custom, highly intelligent AI-powered WhatsApp agent. The AI Real Estate CRM is built entirely around OpenClaw, serving as a powerful structural backend to support its semantic reasoning and autonomy.
 
-Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Built on top of local LLMs (Ollama/Qwen3), OpenClaw handles incoming WhatsApp inquiries, understands real estate context, schedules appointments, and autonomously converses with potential buyers, routing complex queries to human agents when necessary.
+While the CRM flawlessly handles property listings, lead management, and agent workflows, **OpenClaw** is the autonomous engine driving the platform. Built on local LLMs (Ollama/Qwen3), OpenClaw fields all incoming WhatsApp inquiries, understands deep real estate context, schedules appointments in real-time, and autonomously converses with potential buyers 24/7. It acts as the ultimate digital real estate agent, only routing complex queries to human staff when absolutely necessary.
 
 ---
 
@@ -64,7 +64,7 @@ Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Bui
 
 ## System Architecture and Message Flow
 
-The system architecture is designed for zero data loss, exact chronological processing, and high resilience, specifically tailored to handle asynchronous WhatsApp messaging and computationally heavy AI inferences.
+The entire system architecture is engineered specifically to protect, serve, and empower **OpenClaw**. It is designed for zero data loss, exact chronological processing, and high resilience, ensuring OpenClaw has continuous, uninterrupted access to asynchronous WhatsApp messaging and computationally heavy AI inference resources.
 
 ### Detailed Architecture Diagram
 
@@ -144,8 +144,8 @@ graph TD
 4. **Task Queuing**: A lightweight task is placed in BullMQ (Redis), and an instant HTTP 200 OK is returned to Meta to prevent timeout retries.
 5. **Distributed Locking**: A background worker acquires a temporary Redis lock for the customer's phone number, ensuring only one worker generates an AI reply for that customer at a time.
 6. **Strict Ordering**: The `DB-Queue Drainer` ensures messages are processed sequentially based on DB timestamps.
-7. **AI Orchestration**: The `OpenClaw` orchestrator builds the context (chat history, property DB lookups) and queries the AI model.
-8. **Resilience**: The query passes through a `Circuit Breaker` that protects the system from DGX Spark/Ollama outages.
+7. **AI Orchestration**: The **OpenClaw** orchestrator serves as the brain of the operation. It builds the context (chat history, live property DB lookups) and queries the AI engine to generate the perfect response.
+8. **Resilience**: The query passes through a `Circuit Breaker` that protects OpenClaw from underlying DGX Spark/Ollama hardware outages.
 9. **Outbound Ledger**: Before sending, a `PENDING` record is written to the Outbound Ledger in Postgres.
 10. **Delivery**: The reply is sent to the Meta WhatsApp Cloud API.
 11. **Confirmation**: Meta responds with a message ID (`wamid`), updating the ledger to `SENT`. The Redis lock is released.
@@ -228,8 +228,8 @@ npx prisma generate
 npm install
 ```
 
-### 3. Ollama Setup
-Install Ollama and pull the required model (ensure it matches your `.env`):
+### 3. OpenClaw AI Setup
+OpenClaw relies on Ollama to power its neural reasoning. Install Ollama and pull the required model:
 ```bash
 ollama pull qwen3:latest
 ollama serve
@@ -298,7 +298,7 @@ cd backend
 npm run build
 node dist/scripts/test-whatsapp-integration.js
 ```
-This pushes mock webhook events into the Redis queue, allowing you to test the AI worker's response generation.
+This pushes mock webhook events into the Redis queue, allowing you to test OpenClaw's response generation and conversational logic safely offline.
 
 ---
 
@@ -313,7 +313,7 @@ This pushes mock webhook events into the Redis queue, allowing you to test the A
 
 ## Scalability and Performance
 
-- **Decoupled Workers:** AI generation can take 2-10 seconds. Webhooks are immediately acknowledged (200 OK) and offloaded to BullMQ workers to prevent API timeouts.
+- **Decoupled Workers:** OpenClaw's AI generation can take 2-10 seconds. Webhooks are immediately acknowledged (200 OK) and offloaded to BullMQ workers so OpenClaw never drops a message or causes API timeouts.
 - **Connection Pooling:** Prisma utilizes connection pooling for optimal database performance.
 - **Horizontal Scaling:** The stateless worker nodes can be scaled horizontally to handle high WhatsApp message throughput.
 
