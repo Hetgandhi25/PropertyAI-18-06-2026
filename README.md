@@ -5,27 +5,27 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [System Architecture & Message Flow](#system-architecture--message-flow)
+- [System Architecture and Message Flow](#system-architecture-and-message-flow)
 - [The Journey of a Single Message](#the-journey-of-a-single-message)
 - [Folder Structure](#folder-structure)
 - [Database Overview](#database-overview)
 - [API Documentation](#api-documentation)
-- [Installation & Setup](#installation--setup)
+- [Installation and Setup](#installation-and-setup)
 - [Environment Variables](#environment-variables)
 - [Deployment Guide](#deployment-guide)
 - [Usage Examples](#usage-examples)
 - [Security](#security)
-- [Scalability & Performance](#scalability--performance)
+- [Scalability and Performance](#scalability-and-performance)
 - [Future Roadmap](#future-roadmap)
 - [Documentation](#documentation)
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
 Property Property CRM is a comprehensive Customer Relationship Management (CRM) platform purpose-built for the real estate industry. It streamlines property listings, lead management, and agent-customer interactions. 
 
@@ -33,7 +33,7 @@ Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Bui
 
 ---
 
-## ✨ Features
+## Features
 
 - **Automated WhatsApp AI (OpenClaw):** 24/7 conversational AI agent answering property inquiries via Meta Cloud API.
 - **Property Management:** Complete CRUD for real estate listings, including location hierarchies (State -> City -> Area).
@@ -45,7 +45,7 @@ Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Bui
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Framework:** React 19 + Vite
@@ -62,7 +62,7 @@ Its standout feature is **OpenClaw**, an integrated AI-powered WhatsApp bot. Bui
 
 ---
 
-## 🏗️ System Architecture & Message Flow
+## System Architecture and Message Flow
 
 The system architecture is designed for zero data loss, exact chronological processing, and high resilience, specifically tailored to handle asynchronous WhatsApp messaging and computationally heavy AI inferences.
 
@@ -136,7 +136,7 @@ graph TD
 
 ---
 
-## 🔄 The Journey of a Single Message
+## The Journey of a Single Message
 
 1. **Front Door**: Customer messages on WhatsApp; Meta sends an instant webhook to our Express Backend.
 2. **Authenticity Check**: The `Meta Signature Validator` cryptographically verifies the SHA-256 HMAC signature.
@@ -153,7 +153,7 @@ graph TD
 
 ---
 
-## 📂 Folder Structure
+## Folder Structure
 
 ```text
 ├── backend/                  # Backend Node.js codebase
@@ -177,7 +177,7 @@ graph TD
 
 ---
 
-## 🗄️ Database Overview
+## Database Overview
 
 The system uses **PostgreSQL** structured via Prisma. Core entities include:
 - `User` & `Agent`: Authentication and agent profiling.
@@ -188,7 +188,7 @@ The system uses **PostgreSQL** structured via Prisma. Core entities include:
 
 ---
 
-## 🔌 API Documentation
+## API Documentation
 
 The REST API exposes the following primary endpoints under `/api`:
 - `/auth` - Login, registration, JWT token generation.
@@ -205,7 +205,7 @@ The REST API exposes the following primary endpoints under `/api`:
 
 ---
 
-## 🚀 Installation & Setup
+## Installation and Setup
 
 ### Prerequisites
 - Node.js (v20+)
@@ -237,7 +237,7 @@ ollama serve
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 Create `.env` files in both the **root** (for frontend) and **backend/** directories.
 
@@ -263,7 +263,7 @@ META_APP_SECRET=your_app_secret
 
 ---
 
-## 🌍 Deployment Guide
+## Deployment Guide
 
 1. **Build the Applications:**
    ```bash
@@ -289,7 +289,7 @@ META_APP_SECRET=your_app_secret
 
 ---
 
-## 💡 Usage Examples
+## Usage Examples
 
 ### Testing WhatsApp Integration locally
 You can use the provided backend scripts to simulate webhook events without needing a live Meta connection:
@@ -302,7 +302,7 @@ This pushes mock webhook events into the Redis queue, allowing you to test the A
 
 ---
 
-## 🛡️ Security
+## Security
 
 - **Authentication:** Stateless JWT (JSON Web Tokens) for API access.
 - **Data Integrity:** Meta webhook signatures are verified using `META_APP_SECRET` to ensure authenticity.
@@ -311,7 +311,7 @@ This pushes mock webhook events into the Redis queue, allowing you to test the A
 
 ---
 
-## 📈 Scalability & Performance
+## Scalability and Performance
 
 - **Decoupled Workers:** AI generation can take 2-10 seconds. Webhooks are immediately acknowledged (200 OK) and offloaded to BullMQ workers to prevent API timeouts.
 - **Connection Pooling:** Prisma utilizes connection pooling for optimal database performance.
@@ -319,7 +319,7 @@ This pushes mock webhook events into the Redis queue, allowing you to test the A
 
 ---
 
-## 🔮 Future Roadmap
+## Future Roadmap
 
 - [ ] **Multi-Tenancy:** Allow multiple real estate agencies to use the same deployment with isolated data.
 - [ ] **Multi-Modal AI:** Enable OpenClaw to analyze incoming images of properties.
@@ -328,7 +328,7 @@ This pushes mock webhook events into the Redis queue, allowing you to test the A
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 For deeper technical dives, please refer to our internal documentation files:
 - [Features Overview](FEATURES_OVERVIEW.md)
