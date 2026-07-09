@@ -41,6 +41,8 @@ This is the **enhanced prototype** of the Property Property CRM WhatsApp automat
 
 ## Architecture Diagram
 
+![n8n PostgreSQL Workflow](./Postgresql-n8n.png)
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                            EXTERNAL SYSTEMS                                  │

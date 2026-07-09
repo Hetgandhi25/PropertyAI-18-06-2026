@@ -43,6 +43,8 @@ This is the **initial prototype** of the Property Property CRM WhatsApp automati
 
 ## Architecture Diagram
 
+![n8n Google Sheets Workflow](./Googlesheets-n8n.png)
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                            EXTERNAL SYSTEMS                                  │
